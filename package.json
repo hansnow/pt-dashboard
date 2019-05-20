@@ -1,0 +1,35 @@
+{
+  "name": "pt-dashboard",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@types/koa-router": "^7.0.40",
+    "@types/koa-session": "^5.10.0",
+    "cheerio": "^1.0.0-rc.3",
+    "got": "^9.6.0",
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.11.0",
+    "mongoose": "^5.5.9",
+    "tough-cookie": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/cheerio": "^0.22.11",
+    "@types/got": "^9.4.4",
+    "@types/koa": "^2.0.48",
+    "@types/koa-bodyparser": "^4.2.2",
+    "@types/mongoose": "^5.5.1",
+    "@types/tough-cookie": "^2.3.5",
+    "concurrently": "^4.1.0",
+    "nodemon": "^1.19.0",
+    "typescript": "^3.4.5"
+  },
+  "scripts": {
+    "watch-ts": "tsc -w",
+    "watch-node": "nodemon",
+    "start": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
+    "build": "tsc"
+  }
+}

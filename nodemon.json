@@ -1,0 +1,6 @@
+{
+  "watch": ["lib"],
+  "ext": "js",
+  "exec": "node lib/app",
+  "delay": "500"
+}
