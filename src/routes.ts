@@ -40,18 +40,6 @@ router.post('/login', async ctx => {
   }
 })
 
-// 测试登录用户
-router.get('/whoami', async ctx => {
-  ctx.body = `You are ${ctx.session.user}`
-})
-
-router.get('/views', ctx => {
-  if (ctx.path === '/favicon.ico') return
-  let n = ctx.session.views || 0
-  ctx.session.views = n + 1
-  ctx.body = 'Hi ' + ctx.session.user + ' , you have visit ' + n + ' times.'
-})
-
 // 站点 - 添加
 router.post('/site', async ctx => {
   const { type, username, password, otp } = ctx.request.body
