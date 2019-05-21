@@ -40,6 +40,12 @@ router.post('/login', async ctx => {
   }
 })
 
+// 用户 - 注销
+router.get('/logout', ctx => {
+  ctx.session.user = null
+  ctx.body = { msg: '注销成功' }
+})
+
 // 站点 - 添加
 router.post('/site', async ctx => {
   const { type, username, password, otp } = ctx.request.body
