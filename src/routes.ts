@@ -98,7 +98,46 @@ router.delete('/site/:id', async ctx => {
       return (ctx.body = { msg: '删除站点成功' })
     }
     ctx.status = 403
-    ctx.body = { msg: '该站点不属于当前用户，不可删除' }
+    ctx.body = { msg: '该站点不属于当前用户，无权进行操作' }
+  } catch (err) {
+    ctx.status = 500
+    ctx.body = { msg: err.message }
+  }
+})
+
+// 站点 - 立即抓取
+router.post('/site/:id/history', async ctx => {
+  try {
+    const user = await db.getUserByName(ctx.session.user)
+    const site = await db.getSiteByID(ctx.params.id)
+    if (user._id.toString() === site.owner.toString()) {
+      const { uploaded, downloaded, magicPoint } = await fetchMteam(
+        site.cookies.toString()
+      )
+      await db.createRecord(site._id, uploaded, downloaded, magicPoint)
+      return (ctx.body = { msg: '站点信息更新成功' })
+    }
+    ctx.status = 403
+    ctx.body = { msg: '该站点不属于当前用户，无权进行操作' }
+  } catch (err) {
+    ctx.status = 500
+    ctx.body = { msg: err.message }
+  }
+})
+
+// 站点 - 获取历史
+router.get('/site/:id/history', async ctx => {
+  try {
+    const user = await db.getUserByName(ctx.session.user)
+    const site = await db.getSiteByID(ctx.params.id)
+    if (user._id.toString() === site.owner.toString()) {
+      const page = ctx.query.page ? parseInt(ctx.query.page) : 1
+      const limit = ctx.query.limit ? parseInt(ctx.query.limit) : 10
+      console.log('page,limit is', page, limit)
+      return (ctx.body = await db.getRecords(site._id, page, limit))
+    }
+    ctx.status = 403
+    ctx.body = { msg: '该站点不属于当前用户，无权进行操作' }
   } catch (err) {
     ctx.status = 500
     ctx.body = { msg: err.message }

@@ -153,6 +153,16 @@ export async function createRecord(
   return await record.save()
 }
 
+/** 获取抓取记录 */
+export async function getRecords(site: string, page: number, limit: number) {
+  const total = await Record.find({ site }).count()
+  const records = await Record.find({ site }, { site: 0, __v: 0 })
+    .sort('-createdAt')
+    .skip((page - 1) * limit)
+    .limit(limit)
+  return { total, records }
+}
+
 mongoose.connection.on('error', () => {
   console.error('Cannot connect to mongodb')
   process.exit(1)

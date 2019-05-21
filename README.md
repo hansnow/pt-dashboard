@@ -78,15 +78,7 @@ PT 站点数据管理，自动记录每天的上传量。
 
 **立即抓取**
 
-`POST /site/history`
-
-<details><summary>Request</summary>
-
-| key    | type   |
-| ------ | ------ |
-| siteID | string |
-
-</details>
+`POST /site/:id/history`
 
 ### 获取数据
 
@@ -107,14 +99,22 @@ PT 站点数据管理，自动记录每天的上传量。
 
 **获取该站点历史数据**
 
-`GET /site/history`
+`GET /site/:id/history`
 
 <details><summary>Request</summary>
 
-| key    | type       |
-| ------ | ---------- |
-| siteID | string     |
-| start  | YYYY-MM-DD |
-| end    | YYYY-MM-DD |
+| key   | type   |
+| ----- | ------ |
+| page  | number |
+| limit | number |
+
+</details>
+
+<details><summary>Response</summary>
+
+| key     | type     |
+| ------- | -------- |
+| total   | number   |
+| records | Record[] |
 
 </details>
