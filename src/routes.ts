@@ -87,5 +87,23 @@ router.get('/site', async ctx => {
   }
 })
 
+// 站点 - 删除
+router.delete('/site/:id', async ctx => {
+  try {
+    const user = await db.getUserByName(ctx.session.user)
+    const site = await db.getSiteByID(ctx.params.id)
+    // TODO: _id居然是个object，不是string
+    if (user._id.toString() === site.owner.toString()) {
+      await db.deleteSite(ctx.params.id)
+      return (ctx.body = { msg: '删除站点成功' })
+    }
+    ctx.status = 403
+    ctx.body = { msg: '该站点不属于当前用户，不可删除' }
+  } catch (err) {
+    ctx.status = 500
+    ctx.body = { msg: err.message }
+  }
+})
+
 export const routes = () => router.routes()
 export const allowedMethods = () => router.allowedMethods()

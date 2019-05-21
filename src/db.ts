@@ -128,9 +128,18 @@ export async function getSitesByOwner(
   })
 }
 
+export async function getSiteByID(_id: string) {
+  return await Site.findOne({ _id })
+}
+
 /** 更新站点信息 */
 export async function updateSite(_id: string, fields: any) {
   await Site.updateOne({ _id }, fields)
+}
+
+/** 删除站点 */
+export async function deleteSite(_id: string) {
+  await Site.deleteOne({ _id })
 }
 
 /** 创建抓取记录 */
