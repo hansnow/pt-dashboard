@@ -1,0 +1,1 @@
+type SiteType = 'ourbits' | 'mteam'

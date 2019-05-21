@@ -42,6 +42,21 @@ PT 站点数据管理，自动记录每天的上传量。
 
 `POST /site`
 
+<details><summary>Request</summary>
+
+| key      | type                 |
+| -------- | -------------------- |
+| type     | 'ourbits' \| 'mteam' |
+| username | string               |
+| password | string               |
+| otp      | string               |
+
+</details>
+
+** 获取站点列表 **
+
+`GET /site`
+
 **删除站点**
 
 `DELETE /site`
@@ -54,10 +69,10 @@ PT 站点数据管理，自动记录每天的上传量。
 
 | key      | type                 |
 | -------- | -------------------- |
-| site     | 'ourbits' \| 'mteam' |
+| type     | 'ourbits' \| 'mteam' |
 | username | string               |
 | password | string               |
-| 2faCode  | string               |
+| otp      | string               |
 
 </details>
 
