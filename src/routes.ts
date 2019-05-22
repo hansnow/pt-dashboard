@@ -120,7 +120,13 @@ router.post('/site/:id/history', async ctx => {
       const { uploaded, downloaded, magicPoint } = await fetchMteam(
         site.cookies.toString()
       )
-      await db.createRecord(site._id, uploaded, downloaded, magicPoint)
+      const record = await db.createRecord(
+        site._id,
+        uploaded,
+        downloaded,
+        magicPoint
+      )
+      await db.updateSite(site._id, { lastRecord: record._id })
       return (ctx.body = { msg: '站点信息更新成功' })
     }
     ctx.status = 403
@@ -139,7 +145,6 @@ router.get('/site/:id/history', async ctx => {
     if (user._id.toString() === site.owner.toString()) {
       const page = ctx.query.page ? parseInt(ctx.query.page) : 1
       const limit = ctx.query.limit ? parseInt(ctx.query.limit) : 10
-      console.log('page,limit is', page, limit)
       return (ctx.body = await db.getRecords(site._id, page, limit))
     }
     ctx.status = 403
