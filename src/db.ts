@@ -92,10 +92,10 @@ export async function createUser(name: string, pass: string) {
 export async function validateUser(name: string, pass: string) {
   const password = sha256(pass)
   const user = await User.findOne({ name })
-  if (user.password === password) {
+  if (user && user.password === password) {
     return user
   }
-  const e = Error('username or password is invalid')
+  const e = Error('用户名/密码错误')
   e.name = 'LoginError'
   throw e
 }

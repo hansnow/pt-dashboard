@@ -7,6 +7,6 @@ export function auth() {
       return next()
     }
     ctx.status = 401
-    ctx.body = { msg: 'Cookie已失效或用户未登录，请重新登录' }
+    ctx.body = { code: 'E0401', msg: 'Cookie已失效或用户未登录，请重新登录' }
   }
 }

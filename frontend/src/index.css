@@ -1,0 +1,13 @@
+.container {
+  min-height: 100vh;
+}
+.login-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 260px;
+  height: 100vh;
+  margin: auto;
+}
