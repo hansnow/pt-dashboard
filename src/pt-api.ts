@@ -105,13 +105,24 @@ export async function fetchMteam(cookies: string) {
   const raw = $('.color_uploaded')
     .parent()
     .contents()
-  const magicPoint = raw[14].data.replace(']:', '').trim()
-  const uploaded = raw[24].data.trim()
-  const downloaded = raw[26].data.trim()
-  return {
-    username,
-    magicPoint,
-    uploaded,
-    downloaded
+  try {
+    const magicPoint = raw[14].data.replace(']:', '').trim()
+    const uploaded = raw[24].data.trim()
+    const downloaded = raw[26].data.trim()
+    return {
+      username,
+      magicPoint,
+      uploaded,
+      downloaded
+    }
+  } catch (err) {
+    if (err.name === 'TypeError') {
+      // Cannot read property 'data' of null
+      // 说明Cookie失效了
+      const e = Error('该站点Cookie已失效')
+      e.name = 'CookieExpired'
+      throw e
+    }
+    throw err
   }
 }
