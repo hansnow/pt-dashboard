@@ -45,6 +45,25 @@ export function getSiteList() {
   return request('/site')
 }
 
+// 添加站点
+export function addSite(type, username, password, otp) {
+  return request('/site', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ type, username, password, otp })
+  })
+}
+
+// 删除站点
+export function deleteSite(siteID) {
+  return request(`/site/${siteID}`, { method: 'DELETE' })
+}
+
+// 立即抓取
+export function refreshSite(siteID) {
+  return request(`/site/${siteID}/history`, { method: 'POST' })
+}
+
 // 获取某个站点的抓取记录
 export function getRecords(id, page = 1, limit = 10) {
   return request(`/site/${id}/history?page=${page}&limit=${limit}`)

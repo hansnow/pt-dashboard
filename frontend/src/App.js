@@ -2,7 +2,7 @@ import React from 'react'
 import { HashRouter as Router, Route } from 'react-router-dom'
 import { LocaleProvider } from 'antd'
 import zhCN from 'antd/lib/locale-provider/zh_CN'
-import Dashboard from './routes/Dashboard'
+import Dashboard from './routes/Dashboard/Dashboard'
 import Login from './routes/Login'
 import Records from './routes/Records'
 

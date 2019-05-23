@@ -53,6 +53,7 @@ function Records({ match, history }) {
   const paginationOpt = {
     ...pagination,
     total,
+    showTotal: () => `共 ${total} 条数据`,
     showSizeChanger: true,
     onChange: handlePaginationChange,
     onShowSizeChange: handlePaginationChange
