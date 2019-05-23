@@ -50,6 +50,7 @@ PT 站点数据管理，自动记录每天的上传量。
 | username | string               |
 | password | string               |
 | otp      | string               |
+| rule     | string               |
 
 </details>
 
@@ -63,16 +64,19 @@ PT 站点数据管理，自动记录每天的上传量。
 
 **更新站点信息**
 
-`PUT /site`
+`PUT /site/:id`
 
 <details><summary>Request</summary>
 
-| key      | type                 |
-| -------- | -------------------- |
-| type     | 'ourbits' \| 'mteam' |
-| username | string               |
-| password | string               |
-| otp      | string               |
+| key      | type               |
+| -------- | ------------------ |
+| type     | 'cookie' \| 'rule' |
+| username | string             |
+| password | string             |
+| otp      | string             |
+| rule     | string             |
+
+`type`为`cookie`时，可以传所有参数，否则参数只能是`rule`
 
 </details>
 
@@ -88,12 +92,12 @@ PT 站点数据管理，自动记录每天的上传量。
 
 <details><summary>Response</summary>
 
-| key          | type                |
-| ------------ | ------------------- |
-| siteID       | string              |
-| siteUsername | string              |
-| upload       | string              |
-| lut          | YYYY-MM-DD HH:mm:ss |
+| key          | type   |
+| ------------ | ------ |
+| siteID       | string |
+| siteUsername | string |
+| upload       | string |
+| lastRecord   | Record |
 
 </details>
 

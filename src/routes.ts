@@ -3,6 +3,7 @@ import * as Router from 'koa-router'
 import * as db from './db'
 import { auth } from './middleware'
 import { loginMteam, fetchMteam } from './pt-api'
+import { reScheduleJob } from './util'
 
 const router = new Router<any, Koa.Context>()
 router.use(['/whoami', '/views', '/site'], auth())
@@ -48,8 +49,8 @@ router.get('/logout', ctx => {
 
 // 站点 - 添加
 router.post('/site', async ctx => {
-  const { type, username, password, otp } = ctx.request.body
-  if (!type || !username || !password || !otp) {
+  const { type, username, password, otp, rule } = ctx.request.body
+  if (!type || !username || !password || !otp || !rule) {
     ctx.status = 400
     return (ctx.body = { msg: '所有字段必填' })
   }
@@ -62,7 +63,13 @@ router.post('/site', async ctx => {
       magicPoint
     } = await fetchMteam(cookies)
     const user = await db.getUserByName(ctx.session.user)
-    const site = await db.createSite(user._id, 'mteam', siteUsername, cookies)
+    const site = await db.createSite(
+      user._id,
+      'mteam',
+      siteUsername,
+      cookies,
+      rule
+    )
     const record = await db.createRecord(
       site._id,
       uploaded,
@@ -87,6 +94,36 @@ router.get('/site', async ctx => {
       cookies: 0
     })
     ctx.body = { sites }
+  } catch (err) {
+    ctx.status = 500
+    ctx.body = { msg: err.message }
+  }
+})
+
+// 站点 - 更新
+router.put('/site/:id', async ctx => {
+  const { type, username, password, otp, rule } = ctx.request.body
+  const { id } = ctx.params
+  let fields = {}
+  try {
+    if (type === 'cookie') {
+      const cookies = await loginMteam(username, password, otp)
+      const { uploaded, downloaded, magicPoint } = await fetchMteam(cookies)
+      const record = await db.createRecord(id, uploaded, downloaded, magicPoint)
+      fields = {
+        uploaded,
+        downloaded,
+        magicPoint,
+        rule,
+        lastRecord: record._id
+      }
+      await db.updateSite(id, fields)
+      return (ctx.body = { msg: '站点Cookie更新成功' })
+    }
+    fields = { rule }
+    await db.updateSite(id, fields)
+    reScheduleJob(id, rule)
+    ctx.body = { msg: '站点抓取规则更新成功' }
   } catch (err) {
     ctx.status = 500
     ctx.body = { msg: err.message }

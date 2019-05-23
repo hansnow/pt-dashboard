@@ -3,7 +3,7 @@
  */
 
 import * as mongoose from 'mongoose'
-import { sha256 } from './util'
+import { sha256, scheduleCrawlJob } from './util'
 
 mongoose.connect('mongodb://localhost/pt_dashboard', {
   useNewUrlParser: true,
@@ -33,11 +33,7 @@ const siteSchema = new mongoose.Schema({
   cookies: mongoose.Schema.Types.String,
   username: mongoose.Schema.Types.String,
   /** node-schdule object literal syntax */
-  rule: {
-    second: { type: mongoose.Schema.Types.Number, default: 0 },
-    minute: { type: mongoose.Schema.Types.Number, default: 45 },
-    hour: { type: mongoose.Schema.Types.Number, default: 23 }
-  },
+  rule: { type: mongoose.Schema.Types.String, default: '55 23 * * *' },
   lastRecord: { type: mongoose.Schema.Types.ObjectId, ref: 'Record' }
 })
 export interface ISite extends mongoose.Document {
@@ -45,11 +41,7 @@ export interface ISite extends mongoose.Document {
   owner: mongoose.Schema.Types.ObjectId
   cookies: mongoose.Schema.Types.String
   username: mongoose.Schema.Types.String
-  rule: {
-    second: mongoose.Schema.Types.Number
-    minute: mongoose.Schema.Types.Number
-    hour: mongoose.Schema.Types.Number
-  }
+  rule: mongoose.Schema.Types.String
   lastRecord: mongoose.Schema.Types.ObjectId
 }
 const Site = mongoose.model<ISite>('Site', siteSchema, 'site')
@@ -110,13 +102,18 @@ export async function createSite(
   owner: string,
   type: SiteType,
   username: string,
-  cookies: string
+  cookies: string,
+  rule: string
 ) {
-  const site = new Site({ owner, type, username, cookies })
+  const site = new Site({ owner, type, username, cookies, rule })
   return await site.save()
 }
 
 /** 获取站点 */
+export async function getAllSites() {
+  return await Site.find()
+}
+
 export async function getSitesByOwner(
   owner: string,
   projection?: string | object
@@ -169,6 +166,7 @@ mongoose.connection.on('error', () => {
 })
 mongoose.connection.once('open', () => {
   console.log('mongodb connected')
+  scheduleCrawlJob()
 })
 
 // TODO: when to close connection
