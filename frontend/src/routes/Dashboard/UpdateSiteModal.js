@@ -6,7 +6,7 @@ import { Modal, Form, Radio, Input, message } from 'antd'
 import { FormItem, ruleValidator } from './AddSiteModal'
 import { updateSite } from '../../services'
 
-function UpdateSiteModal({ visible, onCancel, row, form }) {
+function UpdateSiteModal({ visible, onCancel, row, fetchData, form }) {
   const [loading, setLoading] = useState(false)
   const {
     getFieldDecorator,
@@ -34,7 +34,10 @@ function UpdateSiteModal({ visible, onCancel, row, form }) {
       }
       try {
         await updateSite(row._id, type, payload)
-        message.success('更新站点成功')
+        message.success(
+          type === 'cookie' ? '更新站点成功' : '更新站点抓取规则成功'
+        )
+        fetchData()
         onCancel()
       } catch (err) {
         message.error(err.message)

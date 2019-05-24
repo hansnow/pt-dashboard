@@ -111,9 +111,7 @@ router.put('/site/:id', async ctx => {
       const { uploaded, downloaded, magicPoint } = await fetchMteam(cookies)
       const record = await db.createRecord(id, uploaded, downloaded, magicPoint)
       fields = {
-        uploaded,
-        downloaded,
-        magicPoint,
+        cookies,
         rule,
         lastRecord: record._id
       }

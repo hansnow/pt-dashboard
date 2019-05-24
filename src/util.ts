@@ -53,5 +53,5 @@ export async function scheduleCrawlJob() {
 export async function reScheduleJob(id: string, rule: string) {
   const jobName = getJobName(id)
   schedule.rescheduleJob(jobName, rule)
-  console.log(`[Job Rescheduled] ${jobName}`)
+  console.log(`[Job Rescheduled] ${jobName} ${rule}`)
 }

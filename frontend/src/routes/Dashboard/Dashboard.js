@@ -146,6 +146,7 @@ function Dashboard({ history }) {
         visible={updateSiteModalVisible}
         onCancel={() => setUpdateSiteModalVisible(false)}
         row={updateSiteModalRow}
+        fetchData={fetchData}
       />
       <Table
         rowKey="_id"
