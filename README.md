@@ -122,3 +122,15 @@ PT 站点数据管理，自动记录每天的上传量。
 | records | Record[] |
 
 </details>
+
+**获取 crontab 的人类可读描述**
+
+`GET /cron-descriptor`
+
+<details><summary>Request</summary>
+
+| key  | type   |
+| ---- | ------ |
+| cron | string |
+
+</details>

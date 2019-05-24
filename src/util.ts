@@ -1,4 +1,5 @@
 import { createHmac } from 'crypto'
+import * as https from 'https'
 import * as schedule from 'node-schedule'
 import { getAllSites, createRecord, updateSite } from './db'
 import { fetchMteam } from './pt-api'
@@ -54,4 +55,21 @@ export async function reScheduleJob(id: string, rule: string) {
   const jobName = getJobName(id)
   schedule.rescheduleJob(jobName, rule)
   console.log(`[Job Rescheduled] ${jobName} ${rule}`)
+}
+
+// 一个简陋的HTTP客户端
+export function req(url: string) {
+  return new Promise((resolve, reject) => {
+    https
+      .get(url, resp => {
+        let data = ''
+        resp.on('data', chunk => (data += chunk))
+        resp.on('end', () => {
+          resolve(JSON.parse(data))
+        })
+      })
+      .on('error', err => {
+        reject(err)
+      })
+  })
 }

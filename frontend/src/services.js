@@ -77,3 +77,8 @@ export function refreshSite(siteID) {
 export function getRecords(id, page = 1, limit = 10) {
   return request(`/site/${id}/history?page=${page}&limit=${limit}`)
 }
+
+// 获取crontab描述
+export function translateCron(cron) {
+  return request(`/cron-descriptor?cron=${cron}`)
+}

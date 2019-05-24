@@ -3,10 +3,27 @@ import * as Router from 'koa-router'
 import * as db from './db'
 import { auth } from './middleware'
 import { loginMteam, fetchMteam } from './pt-api'
-import { reScheduleJob } from './util'
+import { reScheduleJob, req } from './util'
 
 const router = new Router<any, Koa.Context>()
 router.use(['/whoami', '/views', '/site'], auth())
+
+// solve CORS issue in
+// https://cronexpressiondescriptor.azurewebsites.net
+router.get('/cron-descriptor', async ctx => {
+  try {
+    const data = await req(
+      `https://cronexpressiondescriptor.azurewebsites.net/api/descriptor/?expression=${
+        ctx.query.cron
+      }&locale=zh-CN`
+    )
+    ctx.body = { ...data }
+  } catch (err) {
+    // console.log('Cron描述获取失败', err)
+    ctx.status = 500
+    ctx.body = { msg: 'Cron描述获取失败' }
+  }
+})
 
 // 用户 - 注册
 router.post('/register', async ctx => {

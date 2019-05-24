@@ -7,6 +7,7 @@ import { format } from 'date-fns'
 import { Table, Button, Popconfirm, message } from 'antd'
 import AddSiteModal from './AddSiteModal'
 import UpdateSiteModal from './UpdateSiteModal'
+import CronTooltip from './CronTooltip'
 import * as services from '../../services'
 
 function Dashboard({ history }) {
@@ -91,7 +92,11 @@ function Dashboard({ history }) {
     { title: '上传量', dataIndex: 'lastRecord.uploaded' },
     { title: '下载量', dataIndex: 'lastRecord.downloaded' },
     { title: '魔力值', dataIndex: 'lastRecord.magicPoint' },
-    { title: '抓取频率', dataIndex: 'rule' },
+    {
+      title: '抓取频率',
+      dataIndex: 'rule',
+      render: v => <CronTooltip cron={v} />
+    },
     {
       title: '更新于',
       dataIndex: 'lastRecord.createdAt',
