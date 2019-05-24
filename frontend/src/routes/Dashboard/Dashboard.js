@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
 import { Table, Button, Popconfirm, message } from 'antd'
 import AddSiteModal from './AddSiteModal'
+import UpdateSiteModal from './UpdateSiteModal'
 import * as services from '../../services'
 
 function Dashboard({ history }) {
@@ -17,6 +18,9 @@ function Dashboard({ history }) {
   const [sites, setSites] = useState([])
   // 添加站点模态框控制
   const [addSiteModalVisible, setAddSiteModalVisible] = useState(false)
+  // 更新站点模态框控制
+  const [updateSiteModalVisible, setUpdateSiteModalVisible] = useState(false)
+  const [updateSiteModalRow, setUpdateSiteModalRow] = useState({})
   async function fetchData() {
     setLoading(true)
     try {
@@ -87,6 +91,7 @@ function Dashboard({ history }) {
     { title: '上传量', dataIndex: 'lastRecord.uploaded' },
     { title: '下载量', dataIndex: 'lastRecord.downloaded' },
     { title: '魔力值', dataIndex: 'lastRecord.magicPoint' },
+    { title: '抓取频率', dataIndex: 'rule' },
     {
       title: '更新于',
       dataIndex: 'lastRecord.createdAt',
@@ -108,6 +113,16 @@ function Dashboard({ history }) {
           >
             更新
           </Button>
+          <Button
+            size="small"
+            onClick={() => {
+              setUpdateSiteModalVisible(true)
+              setUpdateSiteModalRow(row)
+            }}
+            style={{ marginLeft: 4 }}
+          >
+            编辑
+          </Button>
           <Popconfirm
             title="确定要删除该站点吗？"
             onConfirm={() => deleteSite(row._id)}
@@ -126,6 +141,11 @@ function Dashboard({ history }) {
         visible={addSiteModalVisible}
         onCancel={() => setAddSiteModalVisible(false)}
         fetchData={fetchData}
+      />
+      <UpdateSiteModal
+        visible={updateSiteModalVisible}
+        onCancel={() => setUpdateSiteModalVisible(false)}
+        row={updateSiteModalRow}
       />
       <Table
         rowKey="_id"

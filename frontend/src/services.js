@@ -46,11 +46,20 @@ export function getSiteList() {
 }
 
 // 添加站点
-export function addSite(type, username, password, otp) {
+export function addSite(type, username, password, otp, rule) {
   return request('/site', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ type, username, password, otp })
+    body: JSON.stringify({ type, username, password, otp, rule })
+  })
+}
+
+// 更新站点
+export function updateSite(siteID, type, payload) {
+  return request('/site/' + siteID, {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ type, ...payload })
   })
 }
 

@@ -3,11 +3,22 @@
  */
 import React, { useState } from 'react'
 import { Modal, Form, Radio, Input, message } from 'antd'
+import cronParser from 'cron-parser'
 import { addSite } from '../../services'
 
-const FormItem = props => (
+export const FormItem = props => (
   <Form.Item {...props} wrapperCol={{ span: 13 }} labelCol={{ span: 7 }} />
 )
+
+export const ruleValidator = (_, value, callback) => {
+  if (!value) return callback()
+  try {
+    cronParser.parseExpression(value)
+    callback()
+  } catch (err) {
+    callback(err.message)
+  }
+}
 
 function AddSiteModal({ visible, onCancel, fetchData, form }) {
   const [loading, setLoading] = useState(false)
@@ -16,9 +27,9 @@ function AddSiteModal({ visible, onCancel, fetchData, form }) {
     validateFields(async (err, fields) => {
       if (err) return message.error('修正表单中的错误后重新提交')
       setLoading(true)
-      const { type, username, password, otp } = fields
+      const { type, username, password, otp, rule } = fields
       try {
-        await addSite(type, username, password, otp)
+        await addSite(type, username, password, otp, rule)
         message.success('添加站点成功')
         onCancel()
         fetchData()
@@ -64,6 +75,15 @@ function AddSiteModal({ visible, onCancel, fetchData, form }) {
         {getFieldDecorator('otp', {
           rules: [{ required: true, message: 'OTP必填' }]
         })(<Input allowClear placeholder="OTP" />)}
+      </FormItem>
+      <FormItem label="抓取频率">
+        {getFieldDecorator('rule', {
+          initialValue: '55 23 * * *',
+          rules: [
+            { required: true, message: '抓取频率必填' },
+            { message: 'crontab语句格式有误', validator: ruleValidator }
+          ]
+        })(<Input placeholder="抓取频率" />)}
       </FormItem>
     </Modal>
   )
