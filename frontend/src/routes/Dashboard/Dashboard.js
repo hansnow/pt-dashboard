@@ -83,7 +83,27 @@ function Dashboard({ history }) {
     </div>
   )
   const columns = [
-    { title: '站点类型', dataIndex: 'type' },
+    {
+      title: '站点类型',
+      dataIndex: 'type',
+      render: type => {
+        if (type === 'mteam' || type === 'ourbits') {
+          const imgSrcs = {
+            mteam: 'https://i.loli.net/2019/05/27/5ceb32abd776f86645.png',
+            ourbits: 'https://i.loli.net/2019/05/27/5ceb32abe5f6f46376.png'
+          }
+          return (
+            <img
+              src={imgSrcs[type]}
+              alt={type}
+              title={type}
+              style={{ height: 24 }}
+            />
+          )
+        }
+        return '未知站点类型'
+      }
+    },
     {
       title: '用户名',
       dataIndex: 'username',
