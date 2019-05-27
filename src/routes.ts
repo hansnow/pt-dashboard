@@ -4,6 +4,7 @@ import * as db from './db'
 import { auth } from './middleware'
 import { loginMteam, fetchMteam } from './pt-api'
 import { reScheduleJob, req } from './util'
+import { HttpError } from './custom-error'
 
 const router = new Router<any, Koa.Context>()
 router.use(['/whoami', '/views', '/site'], auth())
@@ -19,9 +20,7 @@ router.get('/cron-descriptor', async ctx => {
     )
     ctx.body = { ...data }
   } catch (err) {
-    // console.log('Cron描述获取失败', err)
-    ctx.status = 500
-    ctx.body = { msg: 'Cron描述获取失败' }
+    throw new HttpError('FetchCronDescFailed')
   }
 })
 
