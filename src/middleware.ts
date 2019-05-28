@@ -1,5 +1,5 @@
 import * as koa from 'koa'
-import { HttpError } from './custom-error'
+// import { HttpError } from './custom-error'
 
 // 要求用户必须登录
 export function auth() {
@@ -7,6 +7,8 @@ export function auth() {
     if (ctx.session.user) {
       return next()
     }
-    throw new HttpError('SessionExpired', 401)
+    ctx.status = 401
+    ctx.body = { code: 'E0401', msg: 'Cookie已失效或用户未登录，请重新登录' }
+    // throw new HttpError('SessionExpired', 401)
   }
 }
