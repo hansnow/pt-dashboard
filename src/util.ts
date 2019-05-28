@@ -73,3 +73,16 @@ export function req(url: string) {
       })
   })
 }
+
+// 存储进制转换
+// '27.391 TB' -> 27391
+// '895.23 GB' -> 895.23
+export function toGB(str: string) {
+  if (str.endsWith('TB')) {
+    return parseFloat(str.replace('TB', '')) * 1e3
+  } else if (str.endsWith('GB')) {
+    return parseFloat(str.replace('TB', ''))
+  } else {
+    throw new Error('[toGB] 不认识的单位')
+  }
+}

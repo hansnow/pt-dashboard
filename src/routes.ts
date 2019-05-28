@@ -1,9 +1,10 @@
 import * as Koa from 'koa'
 import * as Router from 'koa-router'
+import { addDays, startOfDay, format } from 'date-fns'
 import * as db from './db'
 import { auth } from './middleware'
 import { loginMteam, fetchMteam } from './pt-api'
-import { reScheduleJob, req } from './util'
+import { reScheduleJob, req, toGB } from './util'
 import { HttpError } from './custom-error'
 
 const router = new Router<any, Koa.Context>()
@@ -200,6 +201,76 @@ router.get('/site/:id/history', async ctx => {
     }
     ctx.status = 403
     ctx.body = { msg: '该站点不属于当前用户，无权进行操作' }
+  } catch (err) {
+    ctx.status = 500
+    ctx.body = { msg: err.message }
+  }
+})
+
+// 站点 - 获取绘图数据
+router.get('/site/:id/chart', async ctx => {
+  const siteID = ctx.params.id
+  let { delta } = ctx.query
+  delta = delta ? parseInt(delta) : 7
+  const now = new Date()
+  const startDate = startOfDay(addDays(now, -delta - 1))
+  const endDate = startOfDay(now)
+  try {
+    const records = await db.getChartRecords(siteID, startDate, endDate)
+    // TODO: 这段代码的实现逻辑太直接，性能不太好，有时间要改掉
+    let filledRecords = Array(delta + 1)
+      .fill(0)
+      .map((_, idx) => ({
+        date: format(addDays(endDate, -idx - 1), 'YYYY-MM-DD')
+      }))
+      .map(({ date }) => {
+        const target = records.find(r => r._id.date === date)
+        if (target) {
+          const {
+            _id,
+            uploaded,
+            downloaded,
+            magicPoint,
+            createdAt
+          } = target.data
+          return {
+            date,
+            _id,
+            uploaded,
+            downloaded,
+            magicPoint,
+            createdAt
+          }
+        }
+        return { date }
+      })
+    let calcedRecords = []
+    // 临时用的工具函数
+    const diff = (a: string, b: string, fn = toGB) =>
+      Math.round((fn(a) - fn(b)) * 1e1) / 1e1
+    const mpToNum = (mp: string) => parseFloat(mp.replace(',', ''))
+    for (let i = 0; i < filledRecords.length - 1; i++) {
+      const record = filledRecords[i]
+      const nextRecord = filledRecords[i + 1]
+      if (record._id && nextRecord._id) {
+        calcedRecords.push({
+          _id: `${record._id} - ${nextRecord._id}`,
+          date: record.date,
+          uploaded: diff(record.uploaded, nextRecord.uploaded)
+          // downloaded: diff(record.downloaded, nextRecord.downloaded),
+          // magicPoint: diff(record.magicPoint, nextRecord.magicPoint, mpToNum)
+        })
+      } else {
+        calcedRecords.push({
+          _id: `${record._id} - ${nextRecord._id}`,
+          date: record.date,
+          uploaded: 0
+          // downloaded: 0,
+          // magicPoint: 0
+        })
+      }
+    }
+    ctx.body = { records: calcedRecords }
   } catch (err) {
     ctx.status = 500
     ctx.body = { msg: err.message }

@@ -123,6 +123,20 @@ PT 站点数据管理，自动记录每天的上传量。
 
 </details>
 
+**获取站点的绘图数据**
+
+该接口获取的是过去 n 天，每天最后一次爬到的数据，如果某天没数据，则返回结果中不会出现这一天。
+
+`GET /site/:id/chart
+
+<details><summary>Request</summary>
+
+| key   | type   |
+| ----- | ------ |
+| delta | number |
+
+</details>
+
 **获取 crontab 的人类可读描述**
 
 `GET /cron-descriptor`

@@ -160,6 +160,42 @@ export async function getRecords(site: string, page: number, limit: number) {
   return { total, records }
 }
 
+/** 获取绘图数据 */
+export async function getChartRecords(
+  site: string,
+  startDate: Date,
+  endDate: Date
+) {
+  const records = await Record.aggregate([
+    { $project: { __v: 0 } },
+    {
+      $match: {
+        site: new mongoose.Types.ObjectId(site),
+        createdAt: { $gt: startDate, $lt: endDate }
+      }
+    },
+    {
+      $sort: { createdAt: -1 }
+    },
+    {
+      $group: {
+        _id: {
+          date: {
+            $dateToString: {
+              format: '%Y-%m-%d',
+              date: '$createdAt',
+              timezone: 'Asia/Shanghai'
+            }
+          }
+        },
+        data: { $first: '$$ROOT' }
+      }
+    },
+    { $sort: { 'data.createdAt': -1 } }
+  ]).exec()
+  return records
+}
+
 mongoose.connection.on('error', () => {
   console.error('Cannot connect to mongodb')
   process.exit(1)
