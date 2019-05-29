@@ -224,6 +224,7 @@ router.get('/site/:id/chart', async ctx => {
         date: format(addDays(endDate, -idx - 1), 'YYYY-MM-DD')
       }))
       .map(({ date }) => {
+        // @ts-ignore
         const target = records.find(r => r._id.date === date)
         if (target) {
           const {
