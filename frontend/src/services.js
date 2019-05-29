@@ -78,6 +78,11 @@ export function getRecords(id, page = 1, limit = 10) {
   return request(`/site/${id}/history?page=${page}&limit=${limit}`)
 }
 
+// 获取图表数据
+export function getChartData(id, delta = '7') {
+  return request(`/site/${id}/chart?delta=${delta}`)
+}
+
 // 获取crontab描述
 export function translateCron(cron) {
   return request(`/cron-descriptor?cron=${cron}`)

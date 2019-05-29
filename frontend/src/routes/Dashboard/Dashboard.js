@@ -4,9 +4,10 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
-import { Table, Button, Popconfirm, message } from 'antd'
+import { Table, Button, Popconfirm, Icon, message } from 'antd'
 import AddSiteModal from './AddSiteModal'
 import UpdateSiteModal from './UpdateSiteModal'
+import UploadChartModal from './UploadChartModal'
 import CronTooltip from './CronTooltip'
 import * as services from '../../services'
 
@@ -22,6 +23,9 @@ function Dashboard({ history }) {
   // 更新站点模态框控制
   const [updateSiteModalVisible, setUpdateSiteModalVisible] = useState(false)
   const [updateSiteModalRow, setUpdateSiteModalRow] = useState({})
+  // 上传量图表模态框控制
+  const [uploadChartModalVisible, setUploadChartModalVisible] = useState(false)
+  const [uploadChartModalRow, setUploadChartModalRow] = useState({})
   async function fetchData() {
     setLoading(true)
     try {
@@ -109,7 +113,23 @@ function Dashboard({ history }) {
       dataIndex: 'username',
       render: (name, row) => <Link to={'/site/' + row._id}>{name}</Link>
     },
-    { title: '上传量', dataIndex: 'lastRecord.uploaded' },
+    {
+      title: '上传量',
+      dataIndex: 'lastRecord.uploaded',
+      render: (v, row) => (
+        <span>
+          {v}
+          <Icon
+            type="bar-chart"
+            style={{ marginLeft: 4, color: '#1890ff', cursor: 'pointer' }}
+            onClick={() => {
+              setUploadChartModalVisible(true)
+              setUploadChartModalRow(row)
+            }}
+          />
+        </span>
+      )
+    },
     { title: '下载量', dataIndex: 'lastRecord.downloaded' },
     { title: '魔力值', dataIndex: 'lastRecord.magicPoint' },
     {
@@ -141,8 +161,8 @@ function Dashboard({ history }) {
           <Button
             size="small"
             onClick={() => {
-              setUpdateSiteModalVisible(true)
               setUpdateSiteModalRow(row)
+              setUpdateSiteModalVisible(true)
             }}
             style={{ marginLeft: 4 }}
           >
@@ -172,6 +192,11 @@ function Dashboard({ history }) {
         onCancel={() => setUpdateSiteModalVisible(false)}
         row={updateSiteModalRow}
         fetchData={fetchData}
+      />
+      <UploadChartModal
+        visible={uploadChartModalVisible}
+        onCancel={() => setUploadChartModalVisible(false)}
+        row={uploadChartModalRow}
       />
       <Table
         rowKey="_id"
