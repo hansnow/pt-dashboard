@@ -3,7 +3,7 @@ import * as Router from 'koa-router'
 import { addDays, startOfDay, format } from 'date-fns'
 import * as db from './db'
 import { auth } from './middleware'
-import { loginMteam, fetchMteam } from './pt-api'
+import { MTeam } from './site-api'
 import { reScheduleJob, req, toGB } from './util'
 import { HttpError } from './custom-error'
 
@@ -71,14 +71,15 @@ router.post('/site', async ctx => {
     ctx.status = 400
     return (ctx.body = { msg: '所有字段必填' })
   }
+  let pt = new MTeam()
   try {
-    const cookies = await loginMteam(username, password, otp)
+    const cookies = await pt.login(username, password, otp)
     const {
       username: siteUsername,
       uploaded,
       downloaded,
       magicPoint
-    } = await fetchMteam(cookies)
+    } = await pt.getAccountInfo()
     const user = await db.getUserByName(ctx.session.user)
     const site = await db.createSite(
       user._id,
@@ -124,8 +125,9 @@ router.put('/site/:id', async ctx => {
   let fields = {}
   try {
     if (type === 'cookie') {
-      const cookies = await loginMteam(username, password, otp)
-      const { uploaded, downloaded, magicPoint } = await fetchMteam(cookies)
+      let pt = new MTeam()
+      const cookies = await pt.login(username, password, otp)
+      const { uploaded, downloaded, magicPoint } = await pt.getAccountInfo()
       const record = await db.createRecord(id, uploaded, downloaded, magicPoint)
       fields = {
         cookies,
@@ -169,9 +171,9 @@ router.post('/site/:id/history', async ctx => {
     const user = await db.getUserByName(ctx.session.user)
     const site = await db.getSiteByID(ctx.params.id)
     if (user._id.toString() === site.owner.toString()) {
-      const { uploaded, downloaded, magicPoint } = await fetchMteam(
-        site.cookies.toString()
-      )
+      let pt = new MTeam()
+      pt.init(site.cookies.toString())
+      const { uploaded, downloaded, magicPoint } = await pt.getAccountInfo()
       const record = await db.createRecord(
         site._id,
         uploaded,
