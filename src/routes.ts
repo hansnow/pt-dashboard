@@ -67,9 +67,9 @@ router.get('/logout', ctx => {
 // 站点 - 添加
 router.post('/site', async ctx => {
   const { type, username, password, otp, rule } = ctx.request.body
-  if (!type || !username || !password || !otp || !rule) {
+  if (!type || !username || !password || !rule) {
     ctx.status = 400
-    return (ctx.body = { msg: '所有字段必填' })
+    return (ctx.body = { msg: '除OTP外，所有字段必填' })
   }
   const pt = getPT(type)
   try {

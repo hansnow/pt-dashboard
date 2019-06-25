@@ -70,9 +70,7 @@ function AddSiteModal({ visible, onCancel, fetchData, form }) {
         })(<Input.Password allowClear placeholder="密码" />)}
       </FormItem>
       <FormItem label="OTP">
-        {getFieldDecorator('otp', {
-          rules: [{ required: true, message: 'OTP必填' }]
-        })(<Input allowClear placeholder="OTP" />)}
+        {getFieldDecorator('otp')(<Input allowClear placeholder="OTP" />)}
       </FormItem>
       <FormItem label="抓取频率">
         {getFieldDecorator('rule', {
