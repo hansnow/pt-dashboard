@@ -14,7 +14,7 @@ app.keys = ['l7ry%2=+$0eevbeu5s1aw^_(*t$h0yg!b4h2i+_^(l@o_#(6zz']
 // 比如bodyParser写在后面的话，路由里ctx.request.body就会不可用
 app.use(httpErrorHandler())
 
-app.use(session({ key: 'pd' }, app))
+app.use(session({ key: 'pd', maxAge: 7 * 24 * 60 * 60 * 1000 }, app))
 
 app.use(bodyParser())
 
