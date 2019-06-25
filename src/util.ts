@@ -2,7 +2,7 @@ import { createHmac } from 'crypto'
 import * as https from 'https'
 import * as schedule from 'node-schedule'
 import { getAllSites, createRecord, updateSite } from './db'
-import { MTeam } from './site-api'
+import getPT from './site-api'
 
 export const secret = '!)5&!h-x6w!o#32jkmwj1wue*4etx&h*+2$izq7t1e65932@5m'
 
@@ -25,7 +25,7 @@ export async function scheduleCrawlJob() {
     const jobName = getJobName(site._id.toString())
     const j = schedule.scheduleJob(jobName, site.rule.toString(), async () => {
       const d = new Date()
-      const pt = new MTeam()
+      const pt = getPT(<SiteType>site.type.toString())
       pt.init(site.cookies.toString())
       try {
         const { uploaded, downloaded, magicPoint } = await pt.getAccountInfo()

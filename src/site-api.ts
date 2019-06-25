@@ -260,3 +260,17 @@ export class MTeam extends NexusPHP {
     }
   }
 }
+
+export default function getPT(type: SiteType) {
+  let pt = null
+  if (type === 'mteam') {
+    pt = new MTeam()
+  } else if (type === 'ourbits') {
+    pt = new Ourbits()
+  } else {
+    const err = Error('未知站点流程')
+    err.name = 'UnknownSiteType'
+    throw err
+  }
+  return pt
+}

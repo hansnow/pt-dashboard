@@ -3,7 +3,7 @@ import * as Router from 'koa-router'
 import { addDays, startOfDay, format } from 'date-fns'
 import * as db from './db'
 import { auth } from './middleware'
-import { MTeam } from './site-api'
+import getPT from './site-api'
 import { reScheduleJob, req, toGB } from './util'
 import { HttpError } from './custom-error'
 
@@ -71,7 +71,7 @@ router.post('/site', async ctx => {
     ctx.status = 400
     return (ctx.body = { msg: '所有字段必填' })
   }
-  let pt = new MTeam()
+  const pt = getPT(type)
   try {
     const cookies = await pt.login(username, password, otp)
     const {
@@ -83,7 +83,7 @@ router.post('/site', async ctx => {
     const user = await db.getUserByName(ctx.session.user)
     const site = await db.createSite(
       user._id,
-      'mteam',
+      type,
       siteUsername,
       cookies,
       rule
@@ -125,7 +125,8 @@ router.put('/site/:id', async ctx => {
   let fields = {}
   try {
     if (type === 'cookie') {
-      let pt = new MTeam()
+      const site = await db.getSiteByID(id)
+      const pt = getPT(<SiteType>site.type.toString())
       const cookies = await pt.login(username, password, otp)
       const { uploaded, downloaded, magicPoint } = await pt.getAccountInfo()
       const record = await db.createRecord(id, uploaded, downloaded, magicPoint)
@@ -171,7 +172,7 @@ router.post('/site/:id/history', async ctx => {
     const user = await db.getUserByName(ctx.session.user)
     const site = await db.getSiteByID(ctx.params.id)
     if (user._id.toString() === site.owner.toString()) {
-      let pt = new MTeam()
+      const pt = getPT(<SiteType>site.type.toString())
       pt.init(site.cookies.toString())
       const { uploaded, downloaded, magicPoint } = await pt.getAccountInfo()
       const record = await db.createRecord(

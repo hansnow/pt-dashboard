@@ -55,9 +55,7 @@ function AddSiteModal({ visible, onCancel, fetchData, form }) {
         })(
           <Radio.Group>
             <Radio value="mteam">M-Team</Radio>
-            <Radio value="ourbits" disabled>
-              Ourbits
-            </Radio>
+            <Radio value="ourbits">Ourbits</Radio>
           </Radio.Group>
         )}
       </FormItem>
